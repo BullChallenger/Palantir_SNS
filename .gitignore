@@ -287,3 +287,5 @@ gradle-app.setting
 ### Front-End ###
 **/front-end/node-modules/**
 **/front-end/static/**
+
+front-end/node_modules/
