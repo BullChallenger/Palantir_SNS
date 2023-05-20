@@ -1,6 +1,8 @@
 package com.palantir.controller;
 
+import com.palantir.controller.request.AccountLoginRequest;
 import com.palantir.controller.request.AccountSignUpRequest;
+import com.palantir.controller.response.AccountLoginResponse;
 import com.palantir.controller.response.AccountSignUpResponse;
 import com.palantir.controller.response.Response;
 import com.palantir.model.Account;
@@ -23,5 +25,11 @@ public class AccountController {
     public Response<AccountSignUpResponse> signUp(@RequestBody AccountSignUpRequest request) {
         Account theAccount = accountService.signUp(request.getAccountId(), request.getPassword());
         return Response.success(AccountSignUpResponse.fromAccount(theAccount));
+    }
+
+    @PostMapping(value = "/login")
+    public Response<AccountLoginResponse> login(@RequestBody AccountLoginRequest request) {
+        String token = accountService.login(request.getAccountId(), request.getPassword());
+        return Response.success(new AccountLoginResponse(token));
     }
 }

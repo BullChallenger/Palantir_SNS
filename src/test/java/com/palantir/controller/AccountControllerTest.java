@@ -1,6 +1,5 @@
 package com.palantir.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.palantir.controller.request.AccountLoginRequest;
 import com.palantir.controller.request.AccountSignUpRequest;
@@ -10,8 +9,8 @@ import com.palantir.model.Account;
 import com.palantir.service.AccountService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -22,7 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootApplication
+@SpringBootTest
 @AutoConfigureMockMvc
 public class AccountControllerTest {
 
@@ -57,7 +56,8 @@ public class AccountControllerTest {
         String accountId = "testAccount";
         String accountPassword = "password";
 
-        when(accountService.signUp(accountId, accountPassword)).thenThrow(new PalantirException(ErrorCode.DUPLICATED_ACCOUNT_ID, ""));
+        when(accountService.signUp(accountId, accountPassword))
+                .thenThrow(new PalantirException(ErrorCode.DUPLICATED_ACCOUNT_ID));
 
         mockMvc.perform(post("/api/v1/account/signUp")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -92,7 +92,7 @@ public class AccountControllerTest {
         String accountId = "testAccount";
         String accountPassword = "password";
 
-        when(accountService.login(accountId, accountPassword)).thenThrow(new PalantirException(ErrorCode.DUPLICATED_ACCOUNT_ID, ""));
+        when(accountService.login(accountId, accountPassword)).thenThrow(new PalantirException(ErrorCode.ACCOUNT_NOT_FOUND));
 
         mockMvc.perform(post("/api/v1/account/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -110,7 +110,7 @@ public class AccountControllerTest {
         String accountPassword = "password";
 
         when(accountService.login(accountId, accountPassword))
-                .thenThrow(new PalantirException(ErrorCode.DUPLICATED_ACCOUNT_ID, ""));
+                .thenThrow(new PalantirException(ErrorCode.INVALID_PASSWORD));
 
         mockMvc.perform(post("/api/v1/account/login")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -1,0 +1,3 @@
+jwt:
+  secret-key: Palantir_Looking_Over_the_World_SECRET_KEY
+  token.expired-time-ms: 2592000000

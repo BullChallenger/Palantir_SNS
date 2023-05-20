@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    include: jwt
   jpa:
     database: postgresql
     hibernate:
