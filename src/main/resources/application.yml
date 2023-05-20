@@ -1,0 +1,15 @@
+spring:
+  jpa:
+    database: postgresql
+    hibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      ddl-auto: update
+      properties.hibernate.format_sql: true
+      show-sql: true
+
+  datasource:
+    hikari.maximum-pool-size: 4
+    url: jdbc:postgresql://localhost:5432/palantir?serverTimezone=Asia/Seoul
+    username: postgres
+    password: PALANTIR
+    driver-class-name: org.postgresql.Driver
