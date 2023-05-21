@@ -6,7 +6,6 @@ import com.palantir.fixture.AccountEntityFixture;
 import com.palantir.model.entity.AccountEntity;
 import com.palantir.repository.AccountEntityRepository;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -35,7 +34,7 @@ public class AccountServiceTest {
         String accountId = "testAccount";
         String accountPassword = "password";
 
-        AccountEntity fixture = AccountEntityFixture.get(accountId, accountPassword);
+        AccountEntity fixture = AccountEntityFixture.get(1L, accountId, accountPassword);
 
         when(accountEntityRepository.findByAccountId(accountId)).thenReturn(Optional.empty());
         when(passwordEncoder.encode(accountPassword)).thenReturn("encrypt_password");
@@ -49,7 +48,7 @@ public class AccountServiceTest {
         String accountId = "testAccount";
         String accountPassword = "password";
 
-        AccountEntity fixture = AccountEntityFixture.get(accountId, accountPassword);
+        AccountEntity fixture = AccountEntityFixture.get(1L, accountId, accountPassword);
 
         when(accountEntityRepository.findByAccountId(accountId)).thenReturn(Optional.of(fixture));
         when(passwordEncoder.encode(accountPassword)).thenReturn("encrypt_password");
@@ -64,7 +63,7 @@ public class AccountServiceTest {
         String accountId = "testAccount";
         String accountPassword = "password";
 
-        AccountEntity fixture = AccountEntityFixture.get(accountId, accountPassword);
+        AccountEntity fixture = AccountEntityFixture.get(1L, accountId, accountPassword);
 
         when(accountEntityRepository.findByAccountId(accountId)).thenReturn(Optional.of(fixture));
         when(passwordEncoder.matches(accountPassword, fixture.getPassword())).thenReturn(true);
@@ -89,7 +88,7 @@ public class AccountServiceTest {
         String accountPassword = "password";
         String wrongPassword = "wrongPassword";
 
-        AccountEntity fixture = AccountEntityFixture.get(accountId, accountPassword);
+        AccountEntity fixture = AccountEntityFixture.get(1L, accountId, accountPassword);
 
         when(accountEntityRepository.findByAccountId(accountId)).thenReturn(Optional.of(fixture));
 

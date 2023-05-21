@@ -27,6 +27,12 @@ public class AccountService {
     @Value("${jwt.token.expired-time-ms}")
     private Long expiredTimeMs;
 
+    public Account loadAccountByAccountId(String accountId) {
+        return accountEntityRepository.findByAccountId(accountId).map(Account::fromEntity).orElseThrow(
+                () -> new PalantirException(ErrorCode.ACCOUNT_NOT_FOUND, String.format("%s not found", accountId))
+        );
+    }
+
     // TODO: implement
     @Transactional
     public Account signUp(String accountId, String password) {

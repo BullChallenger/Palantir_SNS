@@ -45,7 +45,8 @@ public class AccountEntity {
     private Timestamp deletedAt;
 
     @Builder
-    public AccountEntity(String accountId, String password) {
+    public AccountEntity(Long id, String accountId, String password) {
+        this.id = id;
         this.accountId = accountId;
         this.password = password;
     }
