@@ -1,13 +1,13 @@
 package com.palantir.repository;
 
-import com.palantir.model.entity.AccountEntity;
 import com.palantir.model.entity.ArticleEntity;
+import com.palantir.model.entity.CommentEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ArticleEntityRepository extends JpaRepository<ArticleEntity, Long> {
+public interface CommentEntityRepository extends JpaRepository<CommentEntity, Long> {
 
-    Page<ArticleEntity> findAllByWriter(AccountEntity account, Pageable pageable);
+    Page<CommentEntity> findAllByArticle(ArticleEntity article, Pageable pageable);
 
 }

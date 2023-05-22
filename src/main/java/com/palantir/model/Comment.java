@@ -1,6 +1,8 @@
 package com.palantir.model;
 
 import com.palantir.model.entity.ArticleEntity;
+import com.palantir.model.entity.CommentEntity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,15 +10,16 @@ import java.sql.Timestamp;
 
 @Getter
 @Builder
-public class Article {
+@AllArgsConstructor
+public class Comment {
 
-    private Long articleId;
-
-    private String title;
+    private Long commentId;
 
     private String content;
 
-    private Account writer;
+    private String writerName;
+
+    private Long articleId;
 
     private Timestamp createdAt;
 
@@ -24,12 +27,12 @@ public class Article {
 
     private Timestamp deletedAt;
 
-    public static Article fromEntity(ArticleEntity entity) {
-        return Article.builder()
-                .articleId(entity.getId())
-                .title(entity.getTitle())
+    public static Comment fromEntity(CommentEntity entity) {
+        return Comment.builder()
+                .commentId(entity.getId())
                 .content(entity.getContent())
-                .writer(Account.fromEntity(entity.getWriter()))
+                .writerName(entity.getAccount().getAccountId())
+                .articleId(entity.getArticle().getId())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .deletedAt(entity.getDeletedAt())
