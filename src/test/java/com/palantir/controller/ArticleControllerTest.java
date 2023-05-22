@@ -3,6 +3,7 @@ package com.palantir.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.palantir.controller.request.ArticleCreateRequest;
 import com.palantir.controller.request.ArticleModifyRequest;
+import com.palantir.controller.request.CommentPostRequest;
 import com.palantir.exception.ErrorCode;
 import com.palantir.exception.PalantirException;
 import com.palantir.fixture.ArticleEntityFixture;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -180,6 +182,116 @@ public class ArticleControllerTest {
 
         mockMvc.perform(delete("/api/v1/article/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser
+    public void getFeedListTest() throws Exception {
+        when(articleService.list(any())).thenReturn(Page.empty());
+
+        mockMvc.perform(get("/api/v1/article")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithAnonymousUser
+    public void getFeedListFailedCuzUnAuthorized() throws Exception {
+        when(articleService.list(any())).thenReturn(Page.empty());
+
+        mockMvc.perform(get("/api/v1/article")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
+    public void getMyFeedListTest() throws Exception {
+        when(articleService.myList(any(), any())).thenReturn(Page.empty());
+
+        mockMvc.perform(get("/api/v1/article/my")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithAnonymousUser
+    public void getMyFeedListFailedCuzUnAuthorized() throws Exception {
+        when(articleService.myList(any(), any())).thenReturn(Page.empty());
+
+        mockMvc.perform(get("/api/v1/article/my")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
+    public void likeTest() throws Exception {
+
+        mockMvc.perform(post("/api/v1/article/1/like")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithAnonymousUser
+    public void likeFailedCuzUnAuthorized() throws Exception {
+        when(articleService.myList(any(), any())).thenReturn(Page.empty());
+
+        mockMvc.perform(post("/api/v1/article/1/like")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
+    public void likeFailedCuzNotFoundArticleTest() throws Exception {
+        doThrow(new PalantirException(ErrorCode.ARTICLE_NOT_FOUND)).when(articleService).like(any(), any());
+
+        mockMvc.perform(post("/api/v1/article/1/like")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser
+    public void commentTest() throws Exception {
+
+        mockMvc.perform(post("/api/v1/article/1/comment")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new CommentPostRequest("comment")))
+                ).andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithAnonymousUser
+    public void commentFailedCuzUnAuthorized() throws Exception {
+
+        mockMvc.perform(post("/api/v1/article/1/comment")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new CommentPostRequest("comment")))
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
+    public void commentFailedCuzNotFoundArticleTest() throws Exception {
+        doThrow(new PalantirException(ErrorCode.ARTICLE_NOT_FOUND)).when(articleService).comment(any(), any(), any());
+
+        mockMvc.perform(post("/api/v1/article/1/comment")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new CommentPostRequest("comment")))
                 ).andDo(print())
                 .andExpect(status().isNotFound());
     }

@@ -3,16 +3,19 @@ package com.palantir.service;
 import com.palantir.exception.ErrorCode;
 import com.palantir.exception.PalantirException;
 import com.palantir.model.Account;
+import com.palantir.model.Alarm;
 import com.palantir.model.entity.AccountEntity;
 import com.palantir.repository.AccountEntityRepository;
+import com.palantir.repository.AlarmEntityRepository;
 import com.palantir.util.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +23,7 @@ public class AccountService {
 
     private final AccountEntityRepository accountEntityRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final AlarmEntityRepository alarmEntityRepository;
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -66,5 +70,12 @@ public class AccountService {
 
         // Create Token
         return token;
+    }
+
+    public Page<Alarm> alarmList(String accountId, Pageable pageable) {
+        AccountEntity theAccountEntity = accountEntityRepository.findByAccountId(accountId).orElseThrow(
+                () -> new PalantirException(ErrorCode.ACCOUNT_NOT_FOUND, String.format("%s not founded!", accountId))
+        );
+        return alarmEntityRepository.findAllByReceiver(theAccountEntity, pageable).map(Alarm::fromEntity);
     }
 }

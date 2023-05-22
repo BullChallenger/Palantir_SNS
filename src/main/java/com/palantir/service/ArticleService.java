@@ -1,13 +1,17 @@
 package com.palantir.service;
 
+import com.palantir.controller.request.CommentPostRequest;
 import com.palantir.exception.ErrorCode;
 import com.palantir.exception.PalantirException;
+import com.palantir.model.AlarmArgs;
+import com.palantir.model.AlarmType;
 import com.palantir.model.Article;
-import com.palantir.model.entity.AccountEntity;
-import com.palantir.model.entity.ArticleEntity;
-import com.palantir.repository.AccountEntityRepository;
-import com.palantir.repository.ArticleEntityRepository;
+import com.palantir.model.Comment;
+import com.palantir.model.entity.*;
+import com.palantir.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -18,6 +22,9 @@ public class ArticleService {
 
     private final ArticleEntityRepository articleEntityRepository;
     private final AccountEntityRepository accountEntityRepository;
+    private final LikeEntityRepository likeEntityRepository;
+    private final CommentEntityRepository commentEntityRepository;
+    private final AlarmEntityRepository alarmEntityRepository;
 
     @Transactional
     public void create(String title, String content, String accountId) {
@@ -45,6 +52,55 @@ public class ArticleService {
         checkPermission(accountId, articleId, theAccount, theArticle);
 
         articleEntityRepository.delete(theArticle);
+    }
+
+    public Page<Article> list(Pageable pageable) {
+        return articleEntityRepository.findAll(pageable).map(Article::fromEntity);
+    }
+
+    public Page<Article> myList(String accountId, Pageable pageable) {
+        AccountEntity theAccount = validAccount(accountId);
+        return articleEntityRepository.findAllByWriter(theAccount, pageable).map(Article::fromEntity);
+    }
+
+    @Transactional
+    public void like(Long articleId, String accountId) {
+        AccountEntity theAccount = validAccount(accountId);
+        ArticleEntity theArticle = validArticle(articleId);
+
+        likeEntityRepository.findByAccountAndArticle(theAccount, theArticle).ifPresent( like -> {
+            throw new PalantirException(ErrorCode.ALREADY_LIKED, String.format("%s already liked article %d", accountId, articleId));
+        });
+
+        likeEntityRepository.save(LikeEntity.of(theAccount, theArticle));
+
+        alarmEntityRepository.save(AlarmEntity.of(theArticle.getWriter(),
+                                                    AlarmType.NEW_LIKE_ON_ARTICLE,
+                                                    new AlarmArgs(theAccount.getId(), theArticle.getId())
+        ));
+    }
+
+    public int likeCount(Long   articleId) {
+        ArticleEntity theArticle = validArticle(articleId);
+        return likeEntityRepository.countByArticle(theArticle);
+    }
+
+    @Transactional
+    public void comment(Long articleId, String accountId, String content) {
+        AccountEntity theAccount = validAccount(accountId);
+        ArticleEntity theArticle = validArticle(articleId);
+
+        commentEntityRepository.save(CommentEntity.of(theAccount, theArticle, content));
+
+        alarmEntityRepository.save(AlarmEntity.of(theArticle.getWriter(),
+                                                    AlarmType.NEW_COMMENT_ON_ARTICLE,
+                                                    new AlarmArgs(theAccount.getId(), theArticle.getId())
+        ));
+    }
+
+    public Page<Comment> getComment(Long articleId, Pageable pageable) {
+        ArticleEntity theArticle = validArticle(articleId);
+        return commentEntityRepository.findAllByArticle(theArticle, pageable).map(Comment::fromEntity);
     }
 
     private void checkPermission(String accountId, Long articleId, AccountEntity theAccount, ArticleEntity theArticle) {
