@@ -25,10 +25,7 @@ public class AccountService {
     private final AccountEntityRepository accountEntityRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final AlarmEntityRepository alarmEntityRepository;
-<<<<<<< HEAD
     private final AccountCacheRepository accountCacheRepository;
-=======
->>>>>>> main
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -76,15 +73,7 @@ public class AccountService {
         return token;
     }
 
-<<<<<<< HEAD
     public Page<Alarm> alarmList(Long accountId, Pageable pageable) {
         return alarmEntityRepository.findAllByReceiverId(accountId, pageable).map(Alarm::fromEntity);
-=======
-    public Page<Alarm> alarmList(String accountId, Pageable pageable) {
-        AccountEntity theAccountEntity = accountEntityRepository.findByAccountId(accountId).orElseThrow(
-                () -> new PalantirException(ErrorCode.ACCOUNT_NOT_FOUND, String.format("%s not founded!", accountId))
-        );
-        return alarmEntityRepository.findAllByReceiver(theAccountEntity, pageable).map(Alarm::fromEntity);
->>>>>>> main
     }
 }

@@ -15,10 +15,7 @@ public enum ErrorCode {
     ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "Article Not Found"),
     INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "Permission is invalid"),
     ALREADY_LIKED(HttpStatus.CONFLICT, "Account already liked Article"),
-<<<<<<< HEAD
     ALARM_CONNECT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Connecting alarm occurs error"),
-=======
->>>>>>> main
 
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error!");
 

@@ -18,10 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-<<<<<<< HEAD
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-=======
->>>>>>> main
 
 @RestController
 @RequestMapping("/api/v1/account")
@@ -46,7 +43,6 @@ public class AccountController {
 
     @GetMapping(value = "/alarm")
     public Response<Page<AlarmResponse>> alarm(Pageable pageable, Authentication authentication) {
-<<<<<<< HEAD
         Account theAccount = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), Account.class).orElseThrow(
                 () -> new PalantirException(ErrorCode.INTERNAL_SERVER_ERROR, "Casting to Account class failed.")
         );
@@ -58,11 +54,6 @@ public class AccountController {
         Account theAccount = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), Account.class).orElseThrow(
                 () -> new PalantirException(ErrorCode.INTERNAL_SERVER_ERROR, "Casting to Account class failed.")
         );
-        return alarmService.connectAlarm(theAccount.getId());
-=======
-        Page<AlarmResponse> theAlarms
-                = accountService.alarmList(authentication.getName(), pageable).map(AlarmResponse::fromAlarm);
-        return Response.success(theAlarms);
->>>>>>> main
+        return alarmService.connectAlarm(theAccount.getId());   
     }
 }
