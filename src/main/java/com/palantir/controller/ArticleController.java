@@ -6,6 +6,7 @@ import com.palantir.controller.request.CommentPostRequest;
 import com.palantir.controller.response.ArticleResponse;
 import com.palantir.controller.response.CommentResponse;
 import com.palantir.controller.response.Response;
+import com.palantir.model.Account;
 import com.palantir.model.Article;
 import com.palantir.service.ArticleService;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +59,7 @@ public class ArticleController {
     }
 
     @GetMapping(value = "/{articleId}/like")
-    public Response<Integer> likeCount(@PathVariable("articleId") Long articleId) {
+    public Response<Long> likeCount(@PathVariable("articleId") Long articleId) {
         return Response.success(articleService.likeCount(articleId));
     }
 

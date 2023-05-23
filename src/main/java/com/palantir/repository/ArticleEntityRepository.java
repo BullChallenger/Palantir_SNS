@@ -9,5 +9,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ArticleEntityRepository extends JpaRepository<ArticleEntity, Long> {
 
     Page<ArticleEntity> findAllByWriter(AccountEntity account, Pageable pageable);
-
 }

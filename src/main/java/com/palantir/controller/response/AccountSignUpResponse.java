@@ -19,7 +19,7 @@ public class AccountSignUpResponse {
 
     public static AccountSignUpResponse fromAccount(Account account) {
         return AccountSignUpResponse.builder()
-                                        .accountId(account.getAccountId())
+                                        .accountId(account.getUsername())
                                         .accountRole(account.getAccountRole())
                                     .build();
     }

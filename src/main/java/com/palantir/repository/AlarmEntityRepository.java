@@ -16,4 +16,6 @@ import java.util.Optional;
 public interface AlarmEntityRepository extends JpaRepository<AlarmEntity, Long> {
 
     Page<AlarmEntity> findAllByReceiver(AccountEntity receiver, Pageable pageable);
+
+    Page<AlarmEntity> findAllByReceiverId(Long accountId, Pageable pageable);
 }

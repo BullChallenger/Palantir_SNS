@@ -8,6 +8,8 @@ import com.palantir.model.AlarmType;
 import com.palantir.model.Article;
 import com.palantir.model.Comment;
 import com.palantir.model.entity.*;
+import com.palantir.model.event.AlarmEvent;
+import com.palantir.producer.AlarmProducer;
 import com.palantir.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,6 +27,10 @@ public class ArticleService {
     private final LikeEntityRepository likeEntityRepository;
     private final CommentEntityRepository commentEntityRepository;
     private final AlarmEntityRepository alarmEntityRepository;
+
+    private final AlarmService alarmService;
+
+    private final AlarmProducer alarmProducer;
 
     @Transactional
     public void create(String title, String content, String accountId) {
@@ -74,13 +80,12 @@ public class ArticleService {
 
         likeEntityRepository.save(LikeEntity.of(theAccount, theArticle));
 
-        alarmEntityRepository.save(AlarmEntity.of(theArticle.getWriter(),
-                                                    AlarmType.NEW_LIKE_ON_ARTICLE,
-                                                    new AlarmArgs(theAccount.getId(), theArticle.getId())
-        ));
+        alarmProducer.send(new AlarmEvent(theArticle.getWriter().getId(),
+                            AlarmType.NEW_LIKE_ON_ARTICLE,
+                            new AlarmArgs(theAccount.getId(), theArticle.getId())));
     }
 
-    public int likeCount(Long   articleId) {
+    public long likeCount(Long   articleId) {
         ArticleEntity theArticle = validArticle(articleId);
         return likeEntityRepository.countByArticle(theArticle);
     }
@@ -91,12 +96,9 @@ public class ArticleService {
         ArticleEntity theArticle = validArticle(articleId);
 
         commentEntityRepository.save(CommentEntity.of(theAccount, theArticle, content));
-
-        alarmEntityRepository.save(AlarmEntity.of(theArticle.getWriter(),
-                                                    AlarmType.NEW_COMMENT_ON_ARTICLE,
-                                                    new AlarmArgs(theAccount.getId(), theArticle.getId())
-        ));
-    }
+        alarmProducer.send(new AlarmEvent(theArticle.getWriter().getId(),
+                AlarmType.NEW_LIKE_ON_ARTICLE,
+                new AlarmArgs(theAccount.getId(), theArticle.getId())));    }
 
     public Page<Comment> getComment(Long articleId, Pageable pageable) {
         ArticleEntity theArticle = validArticle(articleId);

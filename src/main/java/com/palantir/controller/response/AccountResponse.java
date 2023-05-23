@@ -1,7 +1,6 @@
 package com.palantir.controller.response;
 
 import com.palantir.model.Account;
-import com.palantir.model.AccountRole;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -20,7 +19,7 @@ public class AccountResponse {
     public static AccountResponse fromAccount(Account account) {
         return AccountResponse.builder()
                                         .id(account.getId())
-                                        .accountId(account.getAccountId())
+                                        .accountId(account.getUsername())
                                     .build();
     }
 }
