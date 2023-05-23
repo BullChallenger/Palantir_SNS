@@ -59,7 +59,11 @@ public class ArticleController {
     }
 
     @GetMapping(value = "/{articleId}/like")
+<<<<<<< HEAD
     public Response<Long> likeCount(@PathVariable("articleId") Long articleId) {
+=======
+    public Response<Integer> likeCount(@PathVariable("articleId") Long articleId) {
+>>>>>>> main
         return Response.success(articleService.likeCount(articleId));
     }
 

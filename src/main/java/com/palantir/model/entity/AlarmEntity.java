@@ -30,7 +30,11 @@ public class AlarmEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+<<<<<<< HEAD
     @ManyToOne(fetch = FetchType.LAZY)
+=======
+    @ManyToOne
+>>>>>>> main
     @JoinColumn(name = "account_id")
     private AccountEntity receiver;
 
